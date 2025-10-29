@@ -189,7 +189,7 @@ const HomeScreen: React.FC = () => {
                     <ActionButton icon={PlayIcon} title="Upload Audio File" subtitle="Upload audio or video file" onClick={() => audioInputRef.current?.click()} />
                     <ActionButton icon={PdfIcon} title="Upload Text" subtitle="Upload PDFs & more" onClick={() => textInputRef.current?.click()} />
                     <ActionButton icon={YoutubeIcon} title="Paste YouTube Link" subtitle="Type or paste link" onClick={() => setIsYouTubeModalOpen(true)} />
-                    <ActionButton icon={TextIcon} title="Type Manually" subtitle="Manually create a note" onClick={() => alert("Manual note creation coming soon!")} />
+                    <ActionButton icon={TextIcon} title="Type Manually" subtitle="Manually create a note" onClick={() => dispatch({ type: 'SET_SCREEN', payload: 'manual-note' })} />
                 </div>
             </div>
             

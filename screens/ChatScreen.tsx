@@ -3,64 +3,102 @@ import { useAppContext } from '../context/AppContext';
 import Header from '../components/Header';
 import { PaperAirplaneIcon, UserIcon, BotIcon } from '../components/Icons';
 import { getNoteById } from '../services/storageService';
-import { getChatResponse } from '../services/aiService';
 import { ChatMessage, Note } from '../types';
 import Loader from '../components/Loader';
+import { GoogleGenAI, Chat, GenerateContentResponse } from '@google/genai';
 
 const ChatScreen: React.FC = () => {
     const { state, dispatch } = useAppContext();
     const [input, setInput] = useState('');
     const [isLoading, setIsLoading] = useState(false);
     const messagesEndRef = useRef<HTMLDivElement>(null);
+    const chatRef = useRef<Chat | null>(null);
 
     const note = getNoteById(state.selectedNoteId!);
 
     useEffect(() => {
         messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-    }, [note?.chatHistory]);
+    }, [note?.chatHistory, isLoading]);
+
+    useEffect(() => {
+        if (note && !chatRef.current) {
+            const ai = new GoogleGenAI({ apiKey: process.env.API_KEY! });
+    
+            const history = note.chatHistory.map(message => ({
+                role: message.sender === 'user' ? 'user' : 'model',
+                parts: [{ text: message.text }],
+            }));
+    
+            const systemInstruction = `You are an AI assistant chatting about a specific note. Base all your answers on the provided content.
+            ---
+            Title: ${note.title}
+            Summary: ${note.summary}
+            Transcript: ${note.transcript}
+            ---`;
+    
+            chatRef.current = ai.chats.create({
+                model: 'gemini-2.5-flash',
+                history: history,
+                config: {
+                    systemInstruction: systemInstruction,
+                }
+            });
+        }
+    }, [note]);
+
 
     if (!note) {
         return <div>Note not found</div>;
     }
 
     const handleSend = async () => {
-        if (!input.trim() || isLoading) return;
+        if (!input.trim() || isLoading || !chatRef.current) return;
 
+        const userMessageText = input.trim();
         const userMessage: ChatMessage = {
             id: Date.now().toString(),
             sender: 'user',
-            text: input.trim(),
+            text: userMessageText,
         };
 
-        const updatedNote: Note = {
+        const updatedNoteWithUserMessage: Note = {
             ...note,
             chatHistory: [...note.chatHistory, userMessage],
         };
-        dispatch({ type: 'UPDATE_NOTE', payload: updatedNote });
+        dispatch({ type: 'UPDATE_NOTE', payload: updatedNoteWithUserMessage });
         setInput('');
         setIsLoading(true);
-
-        const aiResponseText = await getChatResponse(
-            `${note.summary}\n${note.transcript}`, 
-            userMessage.text,
-            note.chatHistory.map(m => ({
-                role: m.sender === 'user' ? 'user' : 'model',
-                parts: [{ text: m.text }]
-            }))
-        );
-
-        const aiMessage: ChatMessage = {
-            id: (Date.now() + 1).toString(),
-            sender: 'ai',
-            text: aiResponseText,
-        };
-
-        const finalNote: Note = {
-            ...updatedNote,
-            chatHistory: [...updatedNote.chatHistory, aiMessage],
+        
+        try {
+            const response: GenerateContentResponse = await chatRef.current.sendMessage({ message: userMessageText });
+            const aiResponseText = response.text;
+    
+            const aiMessage: ChatMessage = {
+                id: (Date.now() + 1).toString(),
+                sender: 'ai',
+                text: aiResponseText,
+            };
+    
+            const finalNote: Note = {
+                ...updatedNoteWithUserMessage,
+                chatHistory: [...updatedNoteWithUserMessage.chatHistory, aiMessage],
+            }
+            dispatch({ type: 'UPDATE_NOTE', payload: finalNote });
+        } catch (error) {
+            console.error("Error sending chat message:", error);
+            const errorMessage: ChatMessage = {
+                id: (Date.now() + 1).toString(),
+                sender: 'ai',
+                text: "I'm sorry, I encountered an error and can't respond right now.",
+            };
+            const noteWithError: Note = {
+                ...updatedNoteWithUserMessage,
+                chatHistory: [...updatedNoteWithUserMessage.chatHistory, errorMessage],
+            };
+            dispatch({ type: 'UPDATE_NOTE', payload: noteWithError });
+        } finally {
+            setIsLoading(false);
         }
-        dispatch({ type: 'UPDATE_NOTE', payload: finalNote });
-        setIsLoading(false);
     };
 
     return (

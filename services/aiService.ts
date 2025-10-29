@@ -78,28 +78,6 @@ export const generateSummaryAndActionPoints = async (transcript: string): Promis
     }
 };
 
-export const getChatResponse = async (noteContent: string, userMessage: string, chatHistory: {role: string, parts: {text: string}[]}[]): Promise<string> => {
-    try {
-        const response = await ai.models.generateContent({
-            model: "gemini-2.5-flash",
-            contents: `You are an AI assistant chatting about a specific note. 
-            Here is the note content:
-            ---
-            ${noteContent}
-            ---
-            And here is the conversation history:
-            ${chatHistory.map(m => `${m.role}: ${m.parts[0].text}`).join('\n')}
-            ---
-            Now, please respond to this user message: "${userMessage}"`,
-        });
-
-        return response.text;
-    } catch (error) {
-        console.error("Error getting chat response:", error);
-        return "I'm sorry, I encountered an error and can't respond right now.";
-    }
-};
-
 export const generateStudySet = async (noteContent: string): Promise<{ quizzes: QuizItem[], flashcards: FlashcardItem[] }> => {
     try {
         const response = await ai.models.generateContent({
@@ -154,5 +132,36 @@ export const generateStudySet = async (noteContent: string): Promise<{ quizzes: 
     } catch (error) {
         console.error("Error generating study set:", error);
         return { quizzes: [], flashcards: [] };
+    }
+};
+
+export type WritingAssistanceAction = 'correct' | 'complete' | 'shorter' | 'longer';
+
+export const getWritingAssistance = async (text: string, action: WritingAssistanceAction): Promise<string> => {
+    let prompt = '';
+    switch(action) {
+        case 'correct':
+            prompt = `Correct any spelling and grammar mistakes in the following text. Return only the corrected text, without any explanation, preamble, or markdown formatting.\n\nText: "${text}"`;
+            break;
+        case 'complete':
+            prompt = `Complete the following sentence or phrase naturally. Return only the completed text, without any explanation, preamble, or markdown formatting.\n\nText: "${text}"`;
+            break;
+        case 'shorter':
+            prompt = `Make the following text more concise. Return only the shortened text, without any explanation, preamble, or markdown formatting.\n\nText: "${text}"`;
+            break;
+        case 'longer':
+            prompt = `Expand on the following text to make it more detailed and elaborate. Return only the expanded text, without any explanation, preamble, or markdown formatting.\n\nText: "${text}"`;
+            break;
+    }
+
+    try {
+        const response = await ai.models.generateContent({
+            model: "gemini-2.5-flash",
+            contents: prompt,
+        });
+        return response.text.trim();
+    } catch (error) {
+        console.error("Error getting writing assistance:", error);
+        return text; // Return original text on error
     }
 };

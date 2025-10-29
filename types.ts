@@ -51,4 +51,6 @@ export type Screen =
   | 'share'
   | 'study'
   | 'quiz'
-  | 'flashcards';
+  | 'flashcards'
+  | 'manual-note'
+  | 'subscription';

@@ -1,6 +1,7 @@
 import React from 'react';
 import Header from '../components/Header';
 import { UserIcon, Cog6ToothIcon, BellIcon, SunIcon, QuestionMarkCircleIcon, ChevronRightIcon, ArrowRightOnRectangleIcon } from '../components/Icons';
+import { useAppContext } from '../context/AppContext';
 
 const SettingsItem: React.FC<{ icon: React.FC<any>, text: string }> = ({ icon: Icon, text }) => (
     <button onClick={() => alert(`${text} clicked!`)} className="w-full flex items-center text-left p-4 hover:bg-gray-50 transition-colors border-b border-gray-100 last:border-b-0">
@@ -13,6 +14,8 @@ const SettingsItem: React.FC<{ icon: React.FC<any>, text: string }> = ({ icon: I
 );
 
 const ProfileScreen: React.FC = () => {
+    const { dispatch } = useAppContext();
+    
     return (
          <div className="bg-gray-100 min-h-full">
             <Header title="Profile" theme="gray" />
@@ -31,7 +34,10 @@ const ProfileScreen: React.FC = () => {
                             <h3 className="text-lg font-bold text-gray-800">Subscription</h3>
                             <p className="text-green-600 font-semibold">Premium Plan</p>
                         </div>
-                        <button className="bg-blue-100 text-blue-700 font-semibold px-4 py-2 rounded-lg hover:bg-blue-200 transition-colors">
+                        <button 
+                            onClick={() => dispatch({ type: 'SET_SCREEN', payload: 'subscription' })}
+                            className="bg-blue-100 text-blue-700 font-semibold px-4 py-2 rounded-lg hover:bg-blue-200 transition-colors"
+                        >
                             Manage
                         </button>
                     </div>

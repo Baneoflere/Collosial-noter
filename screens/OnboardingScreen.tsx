@@ -1,22 +1,22 @@
 import React, { useState } from 'react';
 import { useAppContext } from '../context/AppContext';
-import { ArrowRightIcon, CheckIcon } from '../components/Icons';
+import { ArrowRightIcon, CheckIcon, BrainCircuitIcon, SparkleMagicIcon, ChatBubbleIdeaIcon } from '../components/Icons';
 
 const onboardingSteps = [
     {
-        icon: '🎙️',
-        title: "Record & Transcribe",
-        description: "Capture meetings, lectures, and thoughts effortlessly. Get instant, accurate transcripts.",
+        icon: BrainCircuitIcon,
+        title: "Your Second Brain Awaits",
+        description: "Effortlessly capture everything—from fleeting ideas to important meetings. Our best-in-class transcription means you'll never miss a detail.",
     },
     {
-        icon: '✨',
-        title: "AI Summaries",
-        description: "Let Gemini create concise summaries and pull out key action items for you.",
+        icon: SparkleMagicIcon,
+        title: "Transform Noise into Signal",
+        description: "Go from long transcripts to crystal-clear summaries and action items in seconds. Gemini AI finds what matters, so you can focus on the work.",
     },
     {
-        icon: '💬',
-        title: "Chat with Your Notes",
-        description: "Ask questions and get instant answers from your notes, powered by AI.",
+        icon: ChatBubbleIdeaIcon,
+        title: "Dialogue with Your Data",
+        description: "Don't just store information, interact with it. Chat with your notes to uncover insights, create study sets, and unlock your full potential.",
     }
 ];
 
@@ -32,17 +32,21 @@ const OnboardingScreen: React.FC = () => {
         }
     };
 
+    const { icon: Icon, title, description } = onboardingSteps[step];
+
     return (
         <div className="flex flex-col h-full bg-gray-900 text-white p-8 justify-between">
-            <div>
-                <h1 className="text-3xl font-bold text-blue-400">Welcome to</h1>
-                <h2 className="text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-teal-300">Smart Noter</h2>
-            </div>
+            <header>
+                <h1 className="text-3xl font-bold text-blue-400">Unlock Your</h1>
+                <h2 className="text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-teal-300">Second Brain</h2>
+            </header>
 
             <div className="flex flex-col items-center text-center">
-                <div className="text-7xl mb-6">{onboardingSteps[step].icon}</div>
-                <h3 className="text-2xl font-bold mb-2">{onboardingSteps[step].title}</h3>
-                <p className="text-gray-300 max-w-xs">{onboardingSteps[step].description}</p>
+                <div className="w-24 h-24 mb-6 text-teal-300">
+                    <Icon className="w-full h-full" />
+                </div>
+                <h3 className="text-2xl font-bold mb-2">{title}</h3>
+                <p className="text-gray-300 max-w-xs">{description}</p>
             </div>
             
             <div className="flex flex-col items-center">
@@ -50,8 +54,8 @@ const OnboardingScreen: React.FC = () => {
                     {onboardingSteps.map((_, index) => (
                         <div
                             key={index}
-                            className={`w-2 h-2 rounded-full transition-all duration-300 ${
-                                index === step ? 'bg-blue-400 w-6' : 'bg-gray-600'
+                            className={`w-2.5 h-2.5 rounded-full transition-all duration-300 ${
+                                index === step ? 'bg-blue-400 w-8' : 'bg-gray-600'
                             }`}
                         />
                     ))}
