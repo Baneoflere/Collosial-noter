@@ -275,7 +275,7 @@ const HomeScreen: React.FC = () => {
     const templateData = [
         { title: 'Lecture', imageUrl: 'https://images.unsplash.com/photo-1543269865-cbf427effbad?q=80&w=800&auto=format&fit=crop' },
         { title: 'Meeting', imageUrl: 'https://images.unsplash.com/photo-1517048676732-d65bc937f952?q=80&w=800&auto=format&fit=crop' },
-        { title: 'PDF', imageUrl: 'https://images.pexels.com/photos/159114/pexels-photo-159114.jpeg?auto=compress&cs=tinysrgb&w=800' },
+        { title: 'PDF', imageUrl: 'https://images.unsplash.com/photo-1603967118182-5c3fed25023a?q=80&w=800&auto=format&fit=crop' },
         { title: 'YouTube video', imageUrl: 'https://images.pexels.com/photos/220327/pexels-photo-220327.jpeg?auto=compress&cs=tinysrgb&w=800' },
         { title: 'Slideshow', imageUrl: 'https://images.unsplash.com/photo-1557804506-669a67965ba0?q=80&w=800&auto=format&fit=crop' },
         { title: 'Sermon', imageUrl: 'https://images.pexels.com/photos/236339/pexels-photo-236339.jpeg?auto=compress&cs=tinysrgb&w=800' }
