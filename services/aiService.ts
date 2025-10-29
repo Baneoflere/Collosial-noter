@@ -1,5 +1,5 @@
 import { GoogleGenAI, Type } from "@google/genai";
-import { ActionPoint } from "../types";
+import { ActionPoint, QuizItem, FlashcardItem } from "../types";
 
 const ai = new GoogleGenAI({ apiKey: process.env.API_KEY! });
 
@@ -97,5 +97,62 @@ export const getChatResponse = async (noteContent: string, userMessage: string, 
     } catch (error) {
         console.error("Error getting chat response:", error);
         return "I'm sorry, I encountered an error and can't respond right now.";
+    }
+};
+
+export const generateStudySet = async (noteContent: string): Promise<{ quizzes: QuizItem[], flashcards: FlashcardItem[] }> => {
+    try {
+        const response = await ai.models.generateContent({
+            model: "gemini-2.5-pro",
+            contents: `Based on the following note content, generate a study set consisting of multiple-choice quiz questions and flashcards. The content should be directly related to the provided text. Create about 5 quiz questions and 5 flashcards.
+            
+            Note Content:
+            ---
+            ${noteContent}
+            ---
+            
+            Respond with a JSON object.`,
+            config: {
+                responseMimeType: "application/json",
+                responseSchema: {
+                    type: Type.OBJECT,
+                    properties: {
+                        quizzes: {
+                            type: Type.ARRAY,
+                            description: "A list of multiple-choice quiz questions.",
+                            items: {
+                                type: Type.OBJECT,
+                                properties: {
+                                    question: { type: Type.STRING },
+                                    options: { type: Type.ARRAY, items: { type: Type.STRING } },
+                                    correctAnswer: { type: Type.STRING }
+                                },
+                                required: ["question", "options", "correctAnswer"]
+                            }
+                        },
+                        flashcards: {
+                            type: Type.ARRAY,
+                            description: "A list of flashcards with a front and back.",
+                            items: {
+                                type: Type.OBJECT,
+                                properties: {
+                                    front: { type: Type.STRING, description: "The term or question on the front of the card." },
+                                    back: { type: Type.STRING, description: "The definition or answer on the back of the card." }
+                                },
+                                required: ["front", "back"]
+                            }
+                        }
+                    },
+                    required: ["quizzes", "flashcards"]
+                }
+            }
+        });
+
+        const jsonString = response.text.trim();
+        return JSON.parse(jsonString);
+
+    } catch (error) {
+        console.error("Error generating study set:", error);
+        return { quizzes: [], flashcards: [] };
     }
 };

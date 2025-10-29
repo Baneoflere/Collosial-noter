@@ -13,6 +13,9 @@ import TestimonialScreen from './screens/TestimonialScreen';
 import ProfileScreen from './screens/ProfileScreen';
 import ShareScreen from './screens/ShareScreen';
 import GlobalLoader from './components/GlobalLoader';
+import StudyScreen from './screens/StudyScreen';
+import QuizScreen from './screens/QuizScreen';
+import FlashcardsScreen from './screens/FlashcardsScreen';
 
 const App: React.FC = () => {
   const { state } = useAppContext();
@@ -37,6 +40,12 @@ const App: React.FC = () => {
         return <ProfileScreen />;
       case 'share':
         return <ShareScreen />;
+      case 'study':
+        return <StudyScreen />;
+      case 'quiz':
+        return <QuizScreen />;
+      case 'flashcards':
+        return <FlashcardsScreen />;
       default:
         return <HomeScreen />;
     }
@@ -55,12 +64,16 @@ const App: React.FC = () => {
         case 'testimonials':
         case 'share':
             return 'bg-orange-500';
+        case 'study':
+        case 'quiz':
+        case 'flashcards':
+            return 'bg-gray-900'; // Dark theme for study modes
         default:
             return 'bg-gray-100';
     }
   }
 
-  const showNavBar = !['onboarding', 'record', 'share'].includes(state.activeScreen);
+  const showNavBar = !['onboarding', 'record', 'share', 'study', 'quiz', 'flashcards'].includes(state.activeScreen);
 
   return (
     <div className={`w-full h-screen flex flex-col font-sans antialiased ${screenBackgroundColor()}`}>

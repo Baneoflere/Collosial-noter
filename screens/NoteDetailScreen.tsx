@@ -2,8 +2,9 @@ import React, { useState } from 'react';
 import { useAppContext } from '../context/AppContext';
 import { getNoteById } from '../services/storageService';
 import Header from '../components/Header';
-import { TrashIcon, ShareIcon, SparklesIcon } from '../components/Icons';
+import { TrashIcon, ShareIcon, SparklesIcon, BookOpenIcon } from '../components/Icons';
 import { Note } from '../types';
+import { generateStudySet } from '../services/aiService';
 
 type Tab = 'summary' | 'transcript' | 'actions';
 
@@ -47,19 +48,45 @@ const NoteDetailScreen: React.FC = () => {
         dispatch({ type: 'SET_SCREEN', payload: 'chat' });
     }
 
+    const handleStudy = async () => {
+        if (note.quizzes && note.flashcards && (note.quizzes.length > 0 || note.flashcards.length > 0)) {
+            dispatch({ type: 'SET_SCREEN', payload: 'study' });
+        } else {
+            dispatch({ type: 'SET_LOADING', payload: 'Creating study set...' });
+            const noteContent = `Title: ${note.title}\nSummary: ${note.summary}\nTranscript: ${note.transcript}`;
+            const { quizzes, flashcards } = await generateStudySet(noteContent);
+            
+            const updatedNote: Note = { ...note, quizzes, flashcards };
+            dispatch({ type: 'UPDATE_NOTE', payload: updatedNote });
+            
+            dispatch({ type: 'SET_LOADING', payload: null });
+            if (quizzes.length > 0 || flashcards.length > 0) {
+                dispatch({ type: 'SET_SCREEN', payload: 'study' });
+            } else {
+                alert("Could not generate a study set for this note. The content might be too short.");
+            }
+        }
+    }
+
     return (
         <div className="bg-yellow-500 min-h-full">
             <Header title={note.title} theme="yellow" showBackButton onBack={() => dispatch({ type: 'SET_SCREEN', payload: 'notes' })} />
             <main className="bg-gray-100 rounded-t-3xl p-4 min-h-[calc(100vh-80px)]">
-                <div className="flex justify-between items-center mb-4">
+                <div className="flex justify-between items-center mb-4 gap-2">
                     <div className="flex space-x-1">
                         <button onClick={handleDelete} className="p-2 rounded-full hover:bg-gray-200"><TrashIcon className="w-6 h-6 text-gray-600"/></button>
                         <button onClick={handleShare} className="p-2 rounded-full hover:bg-gray-200"><ShareIcon className="w-6 h-6 text-gray-600"/></button>
                     </div>
-                    <button onClick={handleChat} className="bg-gradient-to-r from-blue-500 to-teal-400 text-white font-semibold px-4 py-2 rounded-full shadow-lg flex items-center">
-                        <SparklesIcon className="w-5 h-5 mr-2"/>
-                        AI Chat
-                    </button>
+                    <div className="flex gap-2">
+                        <button onClick={handleStudy} className="bg-purple-600 text-white font-semibold px-4 py-2 rounded-full shadow-lg flex items-center">
+                            <BookOpenIcon className="w-5 h-5 mr-2"/>
+                            Study
+                        </button>
+                        <button onClick={handleChat} className="bg-gradient-to-r from-blue-500 to-teal-400 text-white font-semibold px-4 py-2 rounded-full shadow-lg flex items-center">
+                            <SparklesIcon className="w-5 h-5 mr-2"/>
+                            AI Chat
+                        </button>
+                    </div>
                 </div>
                 
                 <div className="flex border-b border-gray-200 mb-4">
@@ -89,7 +116,7 @@ const NoteDetailScreen: React.FC = () => {
     );
 };
 
-const TabButton = ({ name, tab, activeTab, setActiveTab }) => (
+const TabButton: React.FC<{name: string, tab: Tab, activeTab: Tab, setActiveTab: (tab: Tab) => void}> = ({ name, tab, activeTab, setActiveTab }) => (
     <button
         onClick={() => setActiveTab(tab)}
         className={`px-4 py-2 text-sm font-semibold transition-colors ${

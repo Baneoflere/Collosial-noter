@@ -3,10 +3,16 @@ import { useGeminiLive } from '../hooks/useGeminiLive';
 import { useAppContext } from '../context/AppContext';
 import { generateSummaryAndActionPoints } from '../services/aiService';
 import { Note } from '../types';
-import { CloseIcon, PlayIcon, MicrophoneIcon, BotIcon } from '../components/Icons';
+import { CloseIcon, PlayIcon, MicrophoneIcon, SpeakerWaveIcon } from '../components/Icons';
 import Loader from '../components/Loader';
 
 const formatTime = (totalSeconds: number) => {
+    const minutes = Math.floor(totalSeconds / 60);
+    const seconds = totalSeconds % 60;
+    return `${minutes}:${seconds.toString().padStart(2, '0')}`;
+};
+
+const formatFullTime = (totalSeconds: number) => {
     const hours = Math.floor(totalSeconds / 3600);
     const minutes = Math.floor((totalSeconds % 3600) / 60);
     const seconds = totalSeconds % 60;
@@ -19,11 +25,26 @@ const formatTime = (totalSeconds: number) => {
     return `${padded(minutes)}:${padded(seconds)}`;
 };
 
+const TranscriptBubble: React.FC<{ text: string; time: number }> = ({ text, time }) => (
+    <div className="flex items-start gap-2.5">
+        <div className="flex-shrink-0 w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center">
+            <SpeakerWaveIcon className="w-5 h-5 text-gray-600" />
+        </div>
+        <div className="bg-gray-100 p-3 rounded-xl rounded-tr-none w-full">
+            <div className="flex justify-between items-center mb-1">
+                <span className="font-bold text-sm text-gray-800">Speaker 1</span>
+                <span className="text-xs text-gray-500 font-mono">{formatTime(time)}</span>
+            </div>
+            <p className="text-gray-700">{text}</p>
+        </div>
+    </div>
+);
+
 const RecordScreen: React.FC = () => {
     const { dispatch } = useAppContext();
     const [isProcessing, setIsProcessing] = useState(false);
     const [elapsedTime, setElapsedTime] = useState(0);
-    const [transcriptHistory, setTranscriptHistory] = useState<{ id: number; text: string }[]>([]);
+    const [transcriptHistory, setTranscriptHistory] = useState<{ id: number; text: string; time: number }[]>([]);
     
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const audioContextRef = useRef<AudioContext | null>(null);
@@ -59,7 +80,7 @@ const RecordScreen: React.FC = () => {
     };
 
     const handleTurnComplete = (turnText: string) => {
-        setTranscriptHistory(prev => [...prev, { id: Date.now(), text: turnText }]);
+        setTranscriptHistory(prev => [...prev, { id: Date.now(), text: turnText, time: elapsedTime }]);
     };
     
     const { isRecording, currentSpokenText, startConversation, stopConversation, error } = useGeminiLive(handleComplete, handleTurnComplete);
@@ -84,21 +105,24 @@ const RecordScreen: React.FC = () => {
             analyserRef.current.getByteTimeDomainData(dataArray);
 
             ctx.clearRect(0, 0, canvas.width, canvas.height);
-            ctx.lineWidth = 2;
+            ctx.lineWidth = 3;
             ctx.strokeStyle = '#3B82F6'; // blue-500
-
+            
             const sliceWidth = canvas.width * 1.0 / bufferLength;
             let x = 0;
 
             for (let i = 0; i < bufferLength; i++) {
                 const v = dataArray[i] / 128.0;
                 const y = v * canvas.height / 2;
-                ctx.beginPath();
-                ctx.moveTo(x, canvas.height/2);
-                ctx.lineTo(x, y);
-                ctx.stroke();
+                
+                if (i === 0) {
+                    ctx.moveTo(x, y);
+                } else {
+                    ctx.lineTo(x,y);
+                }
                 x += sliceWidth;
             }
+            ctx.stroke();
 
             animationFrameId = requestAnimationFrame(drawWaveform);
         };
@@ -172,25 +196,22 @@ const RecordScreen: React.FC = () => {
             <div className="flex-1 bg-white rounded-t-3xl text-gray-800 p-4 flex flex-col min-h-0">
                 <div className="text-center mb-4">
                     <h2 className="font-semibold text-lg">Meeting Recording</h2>
-                    <p className="text-gray-500 font-mono">{formatTime(elapsedTime)}</p>
+                    <p className="text-gray-500 font-mono text-lg">{formatFullTime(elapsedTime)}</p>
                 </div>
 
                 <canvas ref={canvasRef} className="w-full h-20 mb-4"></canvas>
                 
                 <div className="flex-1 overflow-y-auto space-y-4 pr-2">
                     {transcriptHistory.map(item => (
-                         <div key={item.id} className="flex items-start gap-2.5">
-                            <div className="flex-shrink-0 w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center text-gray-500"><BotIcon className="w-5 h-5"/></div>
-                            <div className="bg-gray-100 p-3 rounded-xl rounded-tl-none">
-                                <p>{item.text}</p>
-                            </div>
-                        </div>
+                         <TranscriptBubble key={item.id} text={item.text} time={item.time} />
                     ))}
                     {currentSpokenText && (
-                        <div className="flex items-start gap-2.5">
-                            <div className="flex-shrink-0 w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center text-gray-500"><BotIcon className="w-5 h-5"/></div>
-                            <div className="bg-gray-100 p-3 rounded-xl rounded-tl-none">
-                                <p>{currentSpokenText}</p>
+                        <div className="flex items-start gap-2.5 opacity-70">
+                            <div className="flex-shrink-0 w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center">
+                                <SpeakerWaveIcon className="w-5 h-5 text-gray-600"/>
+                            </div>
+                            <div className="bg-gray-100 p-3 rounded-xl rounded-tr-none w-full">
+                                <p className="text-gray-700 italic">{currentSpokenText}</p>
                             </div>
                         </div>
                     )}
@@ -208,7 +229,7 @@ const RecordScreen: React.FC = () => {
                         <button onClick={isRecording ? () => stopConversation(true) : startConversation} className="p-6 rounded-full bg-red-600 hover:bg-red-700 transition-colors shadow-lg">
                              <MicrophoneIcon className="w-8 h-8 text-white" />
                         </button>
-                        <span className="text-sm mt-1 font-medium text-gray-600">{isRecording ? 'Stop' : 'Done'}</span>
+                        <span className="text-sm mt-1 font-medium text-gray-600">{isRecording ? 'Done' : 'Record'}</span>
                     </div>
                     <div className="flex flex-col items-center">
                         <button disabled className="p-4 rounded-full bg-gray-200 opacity-50">

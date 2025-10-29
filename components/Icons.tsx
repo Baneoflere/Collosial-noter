@@ -114,9 +114,52 @@ export const DocumentTextIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props)
     </svg>
 );
 
+export const BookOpenIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" {...props}>
+        <path strokeLinecap="round" strokeLinejoin="round" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25" />
+    </svg>
+);
+
+export const SpeakerWaveIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
+  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" {...props}>
+    <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 7.5V16.5m1.5-7.5V15m1.5-6V16.5m1.5-4.5V15m1.5-3V16.5M3 10.5a8.25 8.25 0 0115 0M21 10.5a8.25 8.25 0 00-15 0" />
+  </svg>
+);
+
+export const Cog6ToothIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
+  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" {...props}>
+    <path strokeLinecap="round" strokeLinejoin="round" d="M9.594 3.94c.09-.542.56-1.007 1.11-1.226.55-.22 1.156-.22 1.706 0 .55.22 1.02.684 1.11 1.226l.094.542c.062.372.166.726.296 1.06.13.333.3.645.508.924.21.28.45.52.72.72.27.21.59.38.92.51.33.13.69.23 1.06.3.54.09 1.007.56 1.226 1.11.22.55.22 1.156 0 1.706-.22.55-.684 1.02-1.226 1.11l-.542.094c-.372.062-.726.166-1.06.296-.333.13-.645.3-.924.508-.28.21-.52.45-.72.72-.21.27-.38.59-.51.92-.13.33-.23.69-.3 1.06l-.09.542c-.09.542-.56 1.007-1.11 1.226-.55.22-1.156.22-1.706 0-.55-.22-1.02-.684-1.11-1.226l-.094-.542c-.062-.372-.166-.726-.296-1.06-.13-.333-.3-.645-.508-.924-.21-.28-.45-.52-.72-.72-.27-.21-.59-.38-.92-.51-.33-.13-.69-.23-1.06-.3l-.542-.09c-.542-.09-1.007-.56-1.226-1.11-.22-.55-.22-1.156 0-1.706.22-.55.684-1.02 1.226-1.11l.542-.094c.372-.062.726-.166 1.06-.296.333-.13.645-.3.924-.508.28-.21.52-.45.72-.72.21-.27.38-.59.51-.92.13-.33.23-.69.3-1.06l.09-.542z" />
+    <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+  </svg>
+);
+
+export const BellIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
+  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" {...props}>
+    <path strokeLinecap="round" strokeLinejoin="round" d="M14.857 17.082a23.848 23.848 0 005.454-1.31A8.967 8.967 0 0118 9.75v-.7V9A6 6 0 006 9v.75a8.967 8.967 0 01-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 01-5.714 0m5.714 0a3 3 0 11-5.714 0" />
+  </svg>
+);
+
+export const SunIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
+  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" {...props}>
+    <path strokeLinecap="round" strokeLinejoin="round" d="M12 3v2.25m6.364.386l-1.591 1.591M21 12h-2.25m-.386 6.364l-1.591-1.591M12 18.75V21m-4.773-4.227l-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0z" />
+  </svg>
+);
+
+export const QuestionMarkCircleIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
+  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" {...props}>
+    <path strokeLinecap="round" strokeLinejoin="round" d="M9.879 7.519c1.171-1.025 3.071-1.025 4.242 0 1.172 1.025 1.172 2.687 0 3.712-.203.179-.43.326-.67.442-.745.361-1.45.999-1.45 1.827v.75M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9 5.25h.008v.008H12v-.008z" />
+  </svg>
+);
+
+export const ArrowRightOnRectangleIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
+  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" {...props}>
+    <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15M12 9l-3 3m0 0l3 3m-3-3h12.75" />
+  </svg>
+);
+
 // Share Targets
 export const WhatsappIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <svg viewBox="0 0 24 24" fill="currentColor" {...props}><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.79.46 3.49 1.32 4.95L2 22l5.25-1.38c1.41.81 3.02 1.29 4.79 1.29h.01c5.46 0 9.91-4.45 9.91-9.92 0-5.46-4.45-9.91-9.92-9.91zM17.23 15.25c-.2-.11-.72-.35-1.18-.51-.12-.05-.25-.08-.37-.08-.24 0-.48.09-.66.27-.43.43-.66.85-.9 1.02-.18.17-.36.19-.63.06-.27-.12-1.13-.41-2.16-1.32-.81-.72-1.36-1.61-1.53-1.88-.17-.27-.03-.43.09-.56.11-.11.24-.29.37-.43.12-.13.17-.24.25-.4.08-.17.04-.31-.03-.43s-.51-1.23-.7-1.68c-.19-.45-.38-.39-.52-.39-.13 0-.29-.01-.45-.01s-.4.06-.6.31c-.2.25-.77.75-.77 1.82s.8 2.11.91 2.26c.11.15 1.54 2.36 3.75 3.3 2.21.93 2.21.62 2.6.6s1.23-.5 1.4-1c.17-.49.17-.93.12-1.02-.05-.09-.18-.14-.38-.25z"></path></svg>;
-export const SlackIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <svg viewBox="0 0 24 24" fill="currentColor" {...props}><path d="M5.04 15.12c0 1.02.83 1.85 1.85 1.85h2.93c1.02 0 1.85-.83 1.85-1.85v-2.93c0-1.02-.83-1.85-1.85-1.85H6.88c-1.02 0-1.85.83-1.85 1.85v2.93zM6.88 5.04c1.02 0 1.85-.83 1.85-1.85V2.13c0-1.02-.83-1.85-1.85-1.85H5.04c-1.02 0-1.85.83-1.85 1.85v.92c0 1.02.83 1.85 1.85 1.85h1.84zM12.2 5.04h2.93c1.02 0 1.85-.83 1.85-1.85V2.13c0-1.02-.83-1.85-1.85-1.85h-2.93c-1.02 0-1.85.83-1.85 1.85v.92c0 1.02.83 1.85 1.85 1.85zM18.96 6.88c0-1.02-.83-1.85-1.85-1.85h-.92c-1.02 0-1.85.83-1.85 1.85v1.85c0 1.02.83 1.85 1.85 1.85h.92c1.02 0 1.85-.83 1.85-1.85V6.88zM18.96 12.2v2.93c0 1.02-.83 1.85-1.85 1.85h-.92c-1.02 0-1.85.83-1.85 1.85v.92c0 1.02.83 1.85 1.85 1.85h.92c1.02 0 1.85-.83 1.85-1.85v-2.93c0-1.02.83-1.85 1.85-1.85h.92c1.02 0 1.85-.83 1.85-1.85v-.92c0-1.02-.83-1.85-1.85-1.85h-.92c-1.02 0-1.85-.83-1.85-1.85zM12.2 18.96c-1.02 0-1.85.83-1.85 1.85v.92c0 1.02.83 1.85 1.85 1.85h1.85c1.02 0 1.85-.83 1.85-1.85v-.92c0-1.02-.83-1.85-1.85-1.85h-1.85z"></path></svg>;
+export const SlackIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <svg viewBox="0 0 24 24" fill="currentColor" {...props}><path d="M5.04 15.12c0 1.02.83 1.85 1.85 1.85h2.93c1.02 0 1.85-.83 1.85-1.85v-2.93c0-1.02-.83-1.85-1.85-1.85H6.88c-1.02 0-1.85.83-1.85 1.85v2.93zM6.88 5.04c1.02 0 1.85-.83 1.85-1.85V2.13c0-1.02-.83-1.85-1.85-1.85H5.04c-1.02 0-1.85.83-1.85 1.85v.92c0 1.02.83 1.85 1.85 1.85h1.84zM12.2 5.04h2.93c1.02 0 1.85-.83 1.85-1.85V2.13c0-1.02-.83-1.85-1.85-1.85h-2.93c-1.02 0-1.85.83-1.85 1.85v.92c0 1.02.83 1.85 1.85 1.85zM18.96 6.88c0-1.02-.83-1.85-1.85-1.85h-.92c-1.02 0-1.85.83-1.85 1.85v1.85c0 1.02.83 1.85 1.85 1.85h.92c1.02 0 1.85-.83 1.85-1.85V6.88zM18.96 12.2v2.93c0 1.02-.83-1.85-1.85-1.85h-.92c-1.02 0-1.85.83-1.85 1.85v.92c0 1.02.83 1.85 1.85 1.85h.92c1.02 0 1.85-.83 1.85-1.85v-2.93c0-1.02.83-1.85 1.85-1.85h.92c1.02 0 1.85-.83 1.85-1.85v-.92c0-1.02-.83-1.85-1.85-1.85h-.92c-1.02 0-1.85-.83-1.85-1.85zM12.2 18.96c-1.02 0-1.85.83-1.85 1.85v.92c0 1.02.83 1.85 1.85 1.85h1.85c1.02 0 1.85-.83 1.85-1.85v-.92c0-1.02-.83-1.85-1.85-1.85h-1.85z"></path></svg>;
 export const NotionIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <svg viewBox="0 0 24 24" fill="currentColor" {...props}><path d="M14.6 2.4l.4 2.1 2.1.4 1.1 2.3v12.4l-2.1 2.4-2.2-1-1.3-2.1-1 .2-1.3 2.1-2.1 1.2-2.2-2.4V4.8l2.2-2.4 2.1 1.2 1.2 2.1 1.2-.2L14.6 2.4zm-3.2 15.4l.2-1.3-2-1.2v2.4l1.8.1zm-1.8-8.2l1.8-.1v5.1l-1.8 1.1V9.6zM14.4 8.5l-1.8.1v6.9l1.8-1v-6zm.2 1.2l1.7-.1v5.7l-1.7 1V9.7z"></path></svg>;
 export const GoogleDriveIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <svg viewBox="0 0 24 24" fill="currentColor" {...props}><path d="M7.71 3.5L1.5 13.99l3.11 5.37 6.21-10.74-3.11-5.12zM12.03 14.5l-3.12 5.37h12.19l3.11-5.37H12.03zM16.32 3.51l-6.2 10.73L16.32 21 22.5 10.51 16.32 3.51z"></path></svg>;
 export const GoogleDocsIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <svg viewBox="0 0 24 24" fill="currentColor" {...props}><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm-2 16H8v-2h4v2zm4-4H8v-2h8v2zm-4-4H8V8h4v2z"></path></svg>;

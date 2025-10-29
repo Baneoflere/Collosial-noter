@@ -15,6 +15,17 @@ export interface ChatMessage {
     text: string;
 }
 
+export interface QuizItem {
+  question: string;
+  options: string[];
+  correctAnswer: string;
+}
+
+export interface FlashcardItem {
+  front: string;
+  back: string;
+}
+
 export interface Note {
   id: string;
   title: string;
@@ -24,6 +35,20 @@ export interface Note {
   actionPoints: ActionPoint[];
   chatHistory: ChatMessage[];
   color: 'blue' | 'green' | 'orange' | 'yellow';
+  quizzes?: QuizItem[];
+  flashcards?: FlashcardItem[];
 }
 
-export type Screen = 'onboarding' | 'home' | 'record' | 'notes' | 'note-detail' | 'chat' | 'testimonials' | 'profile' | 'share';
+export type Screen = 
+  | 'onboarding' 
+  | 'home' 
+  | 'record' 
+  | 'notes' 
+  | 'note-detail' 
+  | 'chat' 
+  | 'testimonials' 
+  | 'profile' 
+  | 'share'
+  | 'study'
+  | 'quiz'
+  | 'flashcards';
