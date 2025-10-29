@@ -1,0 +1,7 @@
+{
+  "name": "Smart Noter - AI Note Taker",
+  "description": "An AI-driven note-taking app that transcribes audio, generates summaries, extracts action points, and allows you to chat with your notes using Gemini.",
+  "requestFramePermissions": [
+    "microphone"
+  ]
+}
