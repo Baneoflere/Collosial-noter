@@ -79,7 +79,7 @@ const SubscriptionScreen: React.FC = () => {
             <main className="relative flex-1 flex flex-col p-6 z-10">
                 <div className="text-center mb-6">
                     <h1 className="text-3xl font-extrabold flex items-center justify-center space-x-2">
-                        <span>Smart Noter</span>
+                        <span>Nota AI</span>
                         <span className="bg-gradient-to-r from-blue-400 to-teal-300 text-transparent bg-clip-text">Pro</span>
                     </h1>
                     <p className="text-lg text-gray-300 mt-1">Unlock All Features</p>

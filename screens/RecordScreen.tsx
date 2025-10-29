@@ -3,7 +3,7 @@ import { useGeminiLive } from '../hooks/useGeminiLive';
 import { useAppContext } from '../context/AppContext';
 import { generateSummaryAndActionPoints } from '../services/aiService';
 import { Note } from '../types';
-import { CloseIcon, PlayIcon, MicrophoneIcon, SpeakerWaveIcon } from '../components/Icons';
+import { CloseIcon, PlayIcon, MicrophoneIcon, SpeakerWaveIcon, ArrowDownIcon } from '../components/Icons';
 import Loader from '../components/Loader';
 
 const formatTime = (totalSeconds: number) => {
@@ -45,6 +45,7 @@ const RecordScreen: React.FC = () => {
     const [isProcessing, setIsProcessing] = useState(false);
     const [elapsedTime, setElapsedTime] = useState(0);
     const [transcriptHistory, setTranscriptHistory] = useState<{ id: number; text: string; time: number }[]>([]);
+    const [isUserScrolledUp, setIsUserScrolledUp] = useState(false);
     
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const audioContextRef = useRef<AudioContext | null>(null);
@@ -53,6 +54,7 @@ const RecordScreen: React.FC = () => {
     const visualizerStreamRef = useRef<MediaStream | null>(null);
     const timerIntervalRef = useRef<number | null>(null);
     const transcriptEndRef = useRef<HTMLDivElement>(null);
+    const scrollContainerRef = useRef<HTMLDivElement>(null);
 
     const handleComplete = async (transcript: string) => {
         if (!transcript.trim()) {
@@ -86,8 +88,25 @@ const RecordScreen: React.FC = () => {
     const { isRecording, currentSpokenText, startConversation, stopConversation, error } = useGeminiLive(handleComplete, handleTurnComplete);
 
     useEffect(() => {
+        if (!isUserScrolledUp) {
+            transcriptEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+        }
+    }, [transcriptHistory, currentSpokenText, isUserScrolledUp]);
+
+    const handleScroll = () => {
+        const container = scrollContainerRef.current;
+        if (container) {
+            const { scrollTop, scrollHeight, clientHeight } = container;
+            const atBottom = scrollHeight - scrollTop - clientHeight < 5;
+            setIsUserScrolledUp(!atBottom);
+        }
+    };
+
+    const scrollToBottom = () => {
         transcriptEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-    }, [transcriptHistory, currentSpokenText]);
+        setIsUserScrolledUp(false);
+    };
+
 
     useEffect(() => {
         let animationFrameId: number;
@@ -188,6 +207,10 @@ const RecordScreen: React.FC = () => {
 
     return (
         <div className="flex flex-col h-full bg-[#0D2544] text-white p-6 pt-12">
+            <style>{`
+                @keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
+                .animate-fade-in { animation: fade-in 0.2s ease-out forwards; }
+            `}</style>
             <header className="text-left mb-6">
                 <h1 className="text-4xl font-extrabold">Record &</h1>
                 <h1 className="text-4xl font-extrabold">Transcribe</h1>
@@ -201,7 +224,7 @@ const RecordScreen: React.FC = () => {
 
                 <canvas ref={canvasRef} className="w-full h-20 mb-4"></canvas>
                 
-                <div className="flex-1 overflow-y-auto space-y-4 pr-2">
+                <div ref={scrollContainerRef} onScroll={handleScroll} className="relative flex-1 overflow-y-auto space-y-4 pr-2">
                     {transcriptHistory.map(item => (
                          <TranscriptBubble key={item.id} text={item.text} time={item.time} />
                     ))}
@@ -215,7 +238,16 @@ const RecordScreen: React.FC = () => {
                             </div>
                         </div>
                     )}
-                     <div ref={transcriptEndRef} />
+                    <div ref={transcriptEndRef} />
+                    {isUserScrolledUp && (
+                        <button 
+                            onClick={scrollToBottom}
+                            className="absolute bottom-4 right-4 bg-blue-500 text-white p-2.5 rounded-full shadow-lg hover:bg-blue-600 transition-colors animate-fade-in z-10"
+                            aria-label="Scroll to bottom"
+                        >
+                            <ArrowDownIcon className="w-5 h-5" />
+                        </button>
+                    )}
                 </div>
                 
                 <footer className="flex-shrink-0 flex items-center justify-around pt-4 mt-auto">

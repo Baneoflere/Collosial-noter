@@ -6,124 +6,49 @@ import { getWritingAssistance, generateSummaryAndActionPoints } from '../service
 import { Note } from '../types';
 import { WritingAssistanceAction } from '../services/aiService';
 
-const SaveStatusIndicator: React.FC<{ status: 'Unsaved Changes' | 'Saving...' | 'Saved' }> = ({ status }) => {
-    let colorClass = 'text-gray-500';
-    if (status === 'Saving...') colorClass = 'text-blue-500';
-    if (status === 'Saved') colorClass = 'text-green-600';
-
-    return <span className={`text-sm font-medium transition-all duration-300 ${colorClass}`}>{status}</span>;
-};
-
-
 const ManualNoteScreen: React.FC = () => {
     const { state, dispatch } = useAppContext();
-    const [noteId, setNoteId] = useState<string | null>(null);
+    const { initialManualNote } = state;
     const [title, setTitle] = useState('');
     const [content, setContent] = useState('');
     const [isAiMenuOpen, setIsAiMenuOpen] = useState(false);
     const [isAiLoading, setIsAiLoading] = useState(false);
-    const [saveStatus, setSaveStatus] = useState<'Unsaved Changes' | 'Saving...' | 'Saved'>('Saved');
 
     const contentRef = useRef<HTMLTextAreaElement>(null);
-    const debounceTimeout = useRef<number | null>(null);
-    const isMounted = useRef(true);
-
+    
     useEffect(() => {
-        isMounted.current = true;
-        return () => {
-            isMounted.current = false;
-            if (debounceTimeout.current) {
-                clearTimeout(debounceTimeout.current);
-            }
-        };
-    }, []);
-
-    useEffect(() => {
-        if (saveStatus === 'Unsaved Changes') {
-            setSaveStatus('Saving...');
-            if (debounceTimeout.current) {
-                clearTimeout(debounceTimeout.current);
-            }
-
-            debounceTimeout.current = window.setTimeout(() => {
-                if (!isMounted.current) return;
-
-                const noteData = {
-                    title: title.trim() || 'Untitled Note',
-                    transcript: content,
-                    summary: content.substring(0, 150),
-                };
-
-                if (noteId) {
-                    const existingNote = state.notes.find(n => n.id === noteId);
-                    if (existingNote) {
-                        const updatedNote: Note = {
-                            ...existingNote,
-                            title: noteData.title,
-                            transcript: noteData.transcript,
-                            summary: existingNote.summary && !existingNote.summary.startsWith("Could not generate") ? existingNote.summary : noteData.summary,
-                        };
-                        dispatch({ type: 'UPDATE_NOTE', payload: updatedNote });
-                    }
-                } else {
-                    const newId = Date.now().toString();
-                    const newNote: Note = {
-                        id: newId,
-                        createdAt: new Date().toISOString(),
-                        actionPoints: [],
-                        chatHistory: [],
-                        color: 'yellow',
-                        ...noteData,
-                    };
-                    dispatch({ type: 'ADD_NOTE', payload: newNote });
-                    setNoteId(newId);
-                }
-                
-                if (isMounted.current) {
-                    setSaveStatus('Saved');
-                }
-
-            }, 3000);
+        if (initialManualNote) {
+            setTitle(initialManualNote.title);
+            setContent(initialManualNote.content);
+            // Clear the initial note from context so it's not used again on re-render
+            dispatch({ type: 'SET_INITIAL_MANUAL_NOTE', payload: null });
         }
-    }, [title, content, noteId, dispatch, state.notes, saveStatus]);
+    }, [initialManualNote, dispatch]);
 
-    const handleFinishAndAnalyze = async () => {
-        if (debounceTimeout.current) {
-            clearTimeout(debounceTimeout.current);
-        }
-        
+    const handleSaveNote = async () => {
         const finalContent = content.trim();
         if (!finalContent) {
             alert("Note content cannot be empty.");
             return;
         }
 
-        dispatch({ type: 'SET_LOADING', payload: 'Analyzing & saving note...' });
+        dispatch({ type: 'SET_LOADING', payload: 'Analyzing and saving note...' });
         
         const { summary, actionPoints } = await generateSummaryAndActionPoints(finalContent);
         
-        const existingNote = noteId ? state.notes.find(n => n.id === noteId) : null;
-        
-        const finalNote: Note = {
-            id: noteId || Date.now().toString(),
+        const newNote: Note = {
+            id: Date.now().toString(),
             title: title.trim() || summary.split(' ').slice(0, 5).join(' ') || 'Manual Note',
-            createdAt: existingNote ? existingNote.createdAt : new Date().toISOString(),
-            summary: summary || finalContent,
+            createdAt: new Date().toISOString(),
+            summary: summary,
             transcript: finalContent,
-            actionPoints: actionPoints.map((ap, index) => ({ ...ap, id: index.toString(), completed: false })),
-            chatHistory: existingNote ? existingNote.chatHistory : [],
+            actionPoints: actionPoints.map((ap, index) => ({ ...ap, id: `${index}-${Math.random()}`, completed: false })),
+            chatHistory: [],
             color: 'yellow',
-            quizzes: existingNote ? existingNote.quizzes : [],
-            flashcards: existingNote ? existingNote.flashcards : [],
         };
         
-        if (noteId) {
-             dispatch({ type: 'UPDATE_NOTE', payload: finalNote });
-        } else {
-            dispatch({ type: 'ADD_NOTE', payload: finalNote });
-        }
-
-        dispatch({ type: 'SET_SELECTED_NOTE_ID', payload: finalNote.id });
+        dispatch({ type: 'ADD_NOTE', payload: newNote });
+        dispatch({ type: 'SET_SELECTED_NOTE_ID', payload: newNote.id });
         dispatch({ type: 'SET_LOADING', payload: null });
         dispatch({ type: 'SET_SCREEN', payload: 'note-detail' });
     };
@@ -149,7 +74,6 @@ const ManualNoteScreen: React.FC = () => {
         } else {
             setContent(result);
         }
-        setSaveStatus('Unsaved Changes');
     };
     
     const AiMenu = () => (
@@ -168,10 +92,7 @@ const ManualNoteScreen: React.FC = () => {
                 <input
                     type="text"
                     value={title}
-                    onChange={(e) => {
-                        setTitle(e.target.value);
-                        setSaveStatus('Unsaved Changes');
-                    }}
+                    onChange={(e) => setTitle(e.target.value)}
                     placeholder="Note Title"
                     className="w-full p-3 mb-4 bg-white border-b-2 border-gray-200 focus:border-yellow-500 text-xl font-bold text-gray-800 outline-none transition-colors"
                 />
@@ -179,10 +100,7 @@ const ManualNoteScreen: React.FC = () => {
                     <textarea
                         ref={contentRef}
                         value={content}
-                        onChange={(e) => {
-                            setContent(e.target.value);
-                            setSaveStatus('Unsaved Changes');
-                        }}
+                        onChange={(e) => setContent(e.target.value)}
                         placeholder="Start writing..."
                         className="w-full h-full p-3 bg-white text-gray-700 resize-none outline-none rounded-lg shadow-inner"
                     />
@@ -201,14 +119,12 @@ const ManualNoteScreen: React.FC = () => {
                 </div>
                 <div className="mt-4 text-center">
                     <button
-                        onClick={handleFinishAndAnalyze}
+                        onClick={handleSaveNote}
                         className="w-full bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-4 rounded-full shadow-lg transition-colors"
                     >
                         Finish & Analyze
                     </button>
-                    <div className="mt-2 h-5 flex items-center justify-center">
-                      <SaveStatusIndicator status={saveStatus} />
-                    </div>
+                    <div className="mt-2 h-5 flex items-center justify-center"></div>
                 </div>
             </main>
             <style>{`

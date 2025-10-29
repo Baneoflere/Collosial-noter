@@ -14,7 +14,7 @@ const NotesListScreen: React.FC = () => {
     }
 
     const handleAddNew = () => {
-        dispatch({ type: 'SET_SCREEN', payload: 'home' });
+        dispatch({ type: 'SET_SCREEN', payload: 'manual-note' });
     }
 
     return (

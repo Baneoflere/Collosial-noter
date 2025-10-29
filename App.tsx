@@ -9,6 +9,7 @@ import RecordScreen from './screens/RecordScreen';
 import NotesListScreen from './screens/NotesListScreen';
 import NoteDetailScreen from './screens/NoteDetailScreen';
 import ChatScreen from './screens/ChatScreen';
+import GeneralChatScreen from './screens/GeneralChatScreen';
 import TestimonialScreen from './screens/TestimonialScreen';
 import ProfileScreen from './screens/ProfileScreen';
 import ShareScreen from './screens/ShareScreen';
@@ -18,6 +19,8 @@ import QuizScreen from './screens/QuizScreen';
 import FlashcardsScreen from './screens/FlashcardsScreen';
 import ManualNoteScreen from './screens/ManualNoteScreen';
 import SubscriptionScreen from './screens/SubscriptionScreen';
+import AffiliateScreen from './screens/AffiliateScreen';
+import AboutScreen from './screens/AboutScreen';
 
 const App: React.FC = () => {
   const { state } = useAppContext();
@@ -36,6 +39,8 @@ const App: React.FC = () => {
         return <NoteDetailScreen />;
       case 'chat':
         return <ChatScreen />;
+      case 'general-chat':
+        return <GeneralChatScreen />;
       case 'testimonials':
         return <TestimonialScreen />;
       case 'profile':
@@ -52,6 +57,10 @@ const App: React.FC = () => {
         return <ManualNoteScreen />;
       case 'subscription':
         return <SubscriptionScreen />;
+      case 'affiliate':
+        return <AffiliateScreen />;
+      case 'about':
+        return <AboutScreen />;
       default:
         return <HomeScreen />;
     }
@@ -64,6 +73,8 @@ const App: React.FC = () => {
             return 'bg-[#0D2544]';
         case 'chat':
             return 'bg-green-600';
+        case 'general-chat':
+            return 'bg-blue-600';
         case 'notes':
         case 'note-detail':
         case 'manual-note':
@@ -75,13 +86,15 @@ const App: React.FC = () => {
         case 'quiz':
         case 'flashcards':
         case 'subscription':
+        case 'affiliate':
+        case 'about':
             return 'bg-gray-900'; // Dark theme for study modes
         default:
             return 'bg-gray-100';
     }
   }
 
-  const showNavBar = !['onboarding', 'record', 'share', 'study', 'quiz', 'flashcards', 'manual-note', 'subscription'].includes(state.activeScreen);
+  const showNavBar = !['onboarding', 'record', 'share', 'study', 'quiz', 'flashcards', 'manual-note', 'subscription', 'affiliate', 'about'].includes(state.activeScreen);
 
   return (
     <div className={`w-full h-screen flex flex-col font-sans antialiased ${screenBackgroundColor()}`}>

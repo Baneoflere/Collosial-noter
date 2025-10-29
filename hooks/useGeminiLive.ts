@@ -82,7 +82,7 @@ export const useGeminiLive = (
               });
             };
             source.connect(scriptProcessorRef.current);
-            scriptProcessorRef.current.connect(inputAudioContextRef.current.destination);
+            // scriptProcessorRef.current.connect(inputAudioContextRef.current.destination); // Removed to prevent audio feedback
           },
           onmessage: async (message: LiveServerMessage) => {
             handleTranscription(message);
@@ -111,7 +111,8 @@ export const useGeminiLive = (
     if (message.serverContent?.inputTranscription) {
       const newText = message.serverContent.inputTranscription.text;
       currentInputTranscriptionRef.current += newText;
-      setCurrentSpokenText(prev => prev + newText);
+      // Set state from the ref to ensure they are always in sync and provide a smoother update mechanism.
+      setCurrentSpokenText(currentInputTranscriptionRef.current);
     }
     if (message.serverContent?.turnComplete) {
       const completedTurnText = currentInputTranscriptionRef.current.trim();

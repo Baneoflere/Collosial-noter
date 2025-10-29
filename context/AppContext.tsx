@@ -1,6 +1,6 @@
 import React, { createContext, useReducer, useContext, useEffect } from 'react';
-import { Note, Screen } from '../types';
-import { getNotes, saveNotes } from '../services/storageService';
+import { Note, Screen, ChatMessage } from '../types';
+import { getNotes, saveNotes, getGeneralChatHistory, saveGeneralChatHistory } from '../services/storageService';
 
 interface AppState {
   activeScreen: Screen;
@@ -8,6 +8,8 @@ interface AppState {
   notes: Note[];
   loadingMessage: string | null;
   hasOnboarded: boolean;
+  generalChatHistory: ChatMessage[];
+  initialManualNote?: { title: string; content: string };
 }
 
 type Action =
@@ -18,7 +20,9 @@ type Action =
   | { type: 'UPDATE_NOTE'; payload: Note }
   | { type: 'DELETE_NOTE'; payload: string }
   | { type: 'SET_LOADING'; payload: string | null }
-  | { type: 'COMPLETE_ONBOARDING' };
+  | { type: 'COMPLETE_ONBOARDING' }
+  | { type: 'SET_GENERAL_CHAT_HISTORY', payload: ChatMessage[] }
+  | { type: 'SET_INITIAL_MANUAL_NOTE', payload: { title: string; content: string } | null };
 
 const initialState: AppState = {
   activeScreen: 'onboarding',
@@ -26,6 +30,8 @@ const initialState: AppState = {
   notes: [],
   loadingMessage: null,
   hasOnboarded: false,
+  generalChatHistory: [],
+  initialManualNote: undefined,
 };
 
 const AppContext = createContext<{
@@ -66,6 +72,12 @@ const appReducer = (state: AppState, action: Action): AppState => {
     case 'COMPLETE_ONBOARDING':
         localStorage.setItem('hasOnboarded', 'true');
         return { ...state, hasOnboarded: true, activeScreen: 'home' };
+    case 'SET_GENERAL_CHAT_HISTORY': {
+        saveGeneralChatHistory(action.payload);
+        return { ...state, generalChatHistory: action.payload };
+    }
+    case 'SET_INITIAL_MANUAL_NOTE':
+        return { ...state, initialManualNote: action.payload };
     default:
       return state;
   }
@@ -78,6 +90,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     dispatch({ type: 'SET_LOADING', payload: 'Initializing...' });
     const loadedNotes = getNotes();
     dispatch({ type: 'SET_NOTES', payload: loadedNotes });
+    const loadedChatHistory = getGeneralChatHistory();
+    dispatch({ type: 'SET_GENERAL_CHAT_HISTORY', payload: loadedChatHistory });
     const onboarded = localStorage.getItem('hasOnboarded') === 'true';
     if(onboarded) {
         dispatch({ type: 'SET_SCREEN', payload: 'home' });

@@ -1,5 +1,5 @@
 import React from 'react';
-import { HomeIcon, NoteIcon, StarIcon, UserIcon } from './Icons';
+import { HomeIcon, NoteIcon, StarIcon, UserIcon, ChatBubbleOvalLeftEllipsisIcon } from './Icons';
 import { useAppContext } from '../context/AppContext';
 import { Screen } from '../types';
 
@@ -9,6 +9,7 @@ const BottomNavBar: React.FC = () => {
     const navItems: { screen: Screen; label: string; icon: React.FC<any> }[] = [
         { screen: 'home', label: 'Home', icon: HomeIcon },
         { screen: 'notes', label: 'Notes', icon: NoteIcon },
+        { screen: 'general-chat', label: 'Chat', icon: ChatBubbleOvalLeftEllipsisIcon },
         { screen: 'testimonials', label: 'Reviews', icon: StarIcon },
         { screen: 'profile', label: 'Profile', icon: UserIcon },
     ];

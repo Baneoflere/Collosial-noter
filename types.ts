@@ -26,6 +26,13 @@ export interface FlashcardItem {
   back: string;
 }
 
+export interface AudioClip {
+  id: string;
+  data: string; // base64 encoded
+  mimeType: string;
+  createdAt: string;
+}
+
 export interface Note {
   id: string;
   title: string;
@@ -37,6 +44,7 @@ export interface Note {
   color: 'blue' | 'green' | 'orange' | 'yellow';
   quizzes?: QuizItem[];
   flashcards?: FlashcardItem[];
+  audioClips?: AudioClip[];
 }
 
 export type Screen = 
@@ -46,6 +54,7 @@ export type Screen =
   | 'notes' 
   | 'note-detail' 
   | 'chat' 
+  | 'general-chat'
   | 'testimonials' 
   | 'profile' 
   | 'share'
@@ -53,4 +62,6 @@ export type Screen =
   | 'quiz'
   | 'flashcards'
   | 'manual-note'
-  | 'subscription';
+  | 'subscription'
+  | 'affiliate'
+  | 'about';
